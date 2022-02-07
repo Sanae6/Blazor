@@ -472,7 +472,7 @@ struct tMD_ImplMap_ {
 // Table 0x1D - FieldRVA
 struct tMD_FieldRVA_ {
 	// The RVA of the initial data for the field
-	U32 rva;
+	PTR rva;
 	// Index into the field table
 	IDX_TABLE field;
 };

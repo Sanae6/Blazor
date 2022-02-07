@@ -425,6 +425,7 @@ void Type_Init() {
 		if (typeInit[i].assemblyName != NULL) {
 			// Normal type initialisation
 			types[i] = MetaData_GetTypeDefFromFullName(typeInit[i].assemblyName, typeInit[i].nameSpace, typeInit[i].name);
+
 			// For the pre-defined system types, fill in the well-known memory sizes
 			types[i]->stackType = typeInit[i].stackType;
 			types[i]->stackSize = typeInit[i].stackSize;

@@ -49,6 +49,8 @@ char* Sys_GetMethodDesc(tMD_MethodDef *pMethod);
 
 void* mallocForever(U32 size);
 
+char* stringOrNull(char* str);
+
 U64 msTime();
 #if defined(DIAG_METHOD_CALLS) || defined(DIAG_OPCODE_TIMES) || defined(DIAG_GC) || defined(DIAG_TOTAL_TIME)
 U64 microTime();

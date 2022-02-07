@@ -103,7 +103,7 @@ void MetaData_LoadGUIDs(tMetaData *pThis, void *pStream, unsigned int streamLen)
 
 /*
 Format of definition strings:
-Always 2 characters to togther. 1st character defines source, 2nd defines destination.
+Always 2 characters to together. 1st character defines source, 2nd defines destination.
 Sources:
 	c: 8-bit value
 	s: 16-bit short
@@ -133,92 +133,92 @@ Sources:
 Destination:
 	x: nowhere, ignore
 	*: 32-bit index into relevant heap;
-		Or coded index - MSB = which table, other 3 bytes = table index
+    Or coded index - MSB = which table, other 3 bytes = table index
 		Or 32-bit int
-		Or pointer (also RVA)
+    p: pointer (also RVA)
 	s: 16-bit value
 	c: 8-bit value
 */
 static char* tableDefs[] = {
 	// 0x00
-	"sxS*G*GxGx",
+	"sxSpGpGpGp",
 	// 0x01
-	"x*;*S*S*",
+	"x*;*SpSp",
 	// 0x02
-	"x*m*i*S*S*0*\x04*\x06*xclcxcxcx*x*x*x*x*x*x*x*x*x*x*I*x*x*x*x*x*x*x*x*x*x*x*x*",
+	"x*mpi*SpSp0*\x04*\x06*xclcxcxcx*xpxpx*xpx*xpx*x*x*xpI*xpxpxpxpx*xpx*x*xpxpxpxp",
 	// 0x03
 	NULL,
 	// 0x04
-	"x*m*ssxsS*B*x*x*x*x*I*x*",
+	"xpmpssxsSpBpxpxpx*x*I*xp",
 	// 0x05
 	NULL,
 	// 0x06
-	"x*m*^*ssssS*B*\x08*x*x*x*x*x*x*I*x*x*x*"
+	"xpmp^pssssSpBp\x08*xpx*xpx*xpxpI*x*xpxp"
 #ifdef GEN_COMBINED_OPCODES
-	"x*x*x*x*x*x*"
+	"x*xpxpxpxp"
 #endif
 #ifdef DIAG_METHOD_CALLS
-	"x*x*x*"
+	"x*xp"
 #endif
 	,
 	// 0x07
 	NULL,
 	// 0x08
-	"ssssS*",
+	"ssssSp",
 	// 0x09
 	"\x02*0*",
 	// 0x0A
-	"x*5*S*B*",
+	"x*5*SpBp",
 	// 0x0B
-	"ccccxs1*B*",
+	"ccccxs1*Bp",
 	// 0x0C
-	"2*:*B*",
+	"2*:*Bp",
 	// 0x0D
 	NULL,
 	// 0x0E
-	"ssxs4*B*",
+	"ssxs4*Bp",
 	// 0x0F
 	"ssxsi*\x02*",
 	// 0x10
 	NULL,
 	// 0x11
-	"B*",
+	"Bp",
 	// 0x12
 	"\x02*\x14*",
 	// 0x13
 	NULL,
 	// 0x14
-	"ssxsS*0*",
+	"ssxsSp0*",
 	// 0x15
 	"\x02*\x17*",
 	// 0x16
 	NULL,
 	// 0x17
-	"ssxsS*B*",
+	"ssxsSpBp",
 	// 0x18
 	"ssxs\06*6*",
 	// 0x19
 	"\x02*7*7*",
 	// 0x1A
-	"S*",
+	"Sp",
 	// 0x1B
-	"x*m*B*",
+	"x*mpBp",
 	// 0x1C
-	"ssxs8*S*\x1a*",
+	"ssxs8*Sp\x1a*",
 	// 0x1D
-	"^*\x04*",
+	"^p\x04*",
 	// 0x1E
 	NULL,
 	// 0x1F
 	NULL,
 	// 0x20
-	"i*ssssssssi*B*S*S*",
+	"i*ssssssssi*BpSpSp",
 	// 0x21
 	NULL,
 	// 0x22
 	NULL,
 	// 0x23
-	"ssssssssi*B*S*S*B*",
+	"ssssssssi*BpSpSpBp",
 	// 0x24
 	NULL,
 	// 0x25
@@ -232,9 +232,9 @@ static char* tableDefs[] = {
 	// 0x29
 	"\x02*\x02*",
 	// 0x2A
-	"ssss<*S*",
+	"ssss<*Sp",
 	// 0x2B
-	"x*m*7*B*",
+	"x*mp7*Bp",
 	// 0x2C
 	"\x2a*0*",
 };
@@ -312,12 +312,15 @@ static void* LoadSingleTable(tMetaData *pThis, tRVA *pRVA, int tableID, void **p
 	void *pRet;
 	unsigned char *pSource = *ppTable;
 	unsigned char *pDest;
-	unsigned int v;
+	size_t v;
 
 	// Calculate the destination row size from table definition, if it hasn't already been calculated
 	if (tableRowSize[tableID] == 0) {
 		for (i=0; i<defLen; i += 2) {
 			switch (pDef[i+1]) {
+				case 'p':
+					rowLen += sizeof(size_t);
+					break;
 				case '*':
 					rowLen += 4;
 					break;
@@ -414,7 +417,7 @@ static void* LoadSingleTable(tMetaData *pThis, tRVA *pRVA, int tableID, void **p
 							v = GetU16(pSource);
 							pSource += 2;
 						}
-						v = (unsigned int)(pThis->strings.pStart + v);
+						v = (size_t)(pThis->strings.pStart + v);
 						break;
 					case 'G': // index into GUID heap
 						if (pThis->index32BitGUID) {
@@ -424,7 +427,7 @@ static void* LoadSingleTable(tMetaData *pThis, tRVA *pRVA, int tableID, void **p
 							v = GetU16(pSource);
 							pSource += 2;
 						}
-						v = (unsigned int)(pThis->GUIDs.pGUID1 + ((v-1) * 16));
+						v = (size_t) (pThis->GUIDs.pGUID1 + ((v - 1) * 16));
 						break;
 					case 'B': // index into BLOB heap
 						if (pThis->index32BitBlob) {
@@ -434,15 +437,15 @@ static void* LoadSingleTable(tMetaData *pThis, tRVA *pRVA, int tableID, void **p
 							v = GetU16(pSource);
 							pSource += 2;
 						}
-						v = (unsigned int)(pThis->blobs.pStart + v);
+						v = (size_t) (pThis->blobs.pStart + v);
 						break;
 					case '^': // RVA to convert to pointer
 						v = GetU32(pSource);
 						pSource += 4;
-						v = (unsigned int)RVA_FindData(pRVA, v);
+						v = (size_t) RVA_FindData(pRVA, v);
 						break;
 					case 'm': // Pointer to this metadata
-						v = (unsigned int)pThis;
+						v = (size_t) pThis;
 						break;
 					case 'l': // Is this the last table entry?
 						v = (row == numRows - 1);
@@ -458,14 +461,18 @@ static void* LoadSingleTable(tMetaData *pThis, tRVA *pRVA, int tableID, void **p
 				}
 			}
 			switch (pDef[i+1]) {
+                case 'p':
+                    *(size_t*)pDest = v;
+					pDest += sizeof(size_t);
+					break;
 				case '*':
-					*(unsigned int*)pDest = v;
-					pDest += 4;
-					break;
-				case 's':
-					*(unsigned short*)pDest = (unsigned short)v;
-					pDest += 2;
-					break;
+                    *(unsigned int*)pDest = (unsigned int)v;
+                    pDest += 4;
+                    break;
+                case 's':
+                    *(unsigned short*)pDest = (unsigned short)v;
+                    pDest += 2;
+                    break;
 				case 'c':
 					*(unsigned char*)pDest = (unsigned char)v;
 					pDest++;

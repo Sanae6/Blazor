@@ -51,9 +51,6 @@
     <ClInclude Include="src\JIT_OpCodes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\JSInterop.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\MetaData.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -18,8 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#if !defined (__COMPAT_H)
-#define __COMPAT_H
+#pragma once
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -59,7 +58,7 @@
 // convert warning to error about macro not enough parameters
 #pragma warning(error:4003)
 
-#define strcasecmp stricmp
+//#define strcasecmp stricmp
 
 #define LIB_PREFIX ""
 #define LIB_SUFFIX "dll"
@@ -88,5 +87,3 @@
 
 #define TMALLOC(t) (t*)malloc(sizeof(t))
 #define TMALLOCFOREVER(t) (t*)mallocForever(sizeof(t))
-
-#endif

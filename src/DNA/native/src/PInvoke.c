@@ -64,19 +64,20 @@ static tLoadedLib* GetLib(STRING name) {
 #if _WIN32
 	pNativeLib = LoadLibraryA(libName);
 #else
-	pNativeLib = dlopen(libName, RTLD_LAZY); //DL_LAZY);
+	return NULL;
+	//pNativeLib = dlopen(libName, RTLD_LAZY); //DL_LAZY);
 #endif
 	if (pNativeLib == NULL) {
 		// Failed to load library
 		printf("Failed to load library: %s\n", libName);
 #ifndef _WIN32
-		{
+		/*{
 			char *pError;
 			pError = dlerror();
 			if (pError) {
 				printf("dlopen() Error: '%s'",pError);
 			}
-		}
+		}*/
 #endif
 		return NULL;
 	}
@@ -94,10 +95,6 @@ fnPInvoke PInvoke_GetFunction(tMetaData *pMetaData, tMD_ImplMap *pImplMap) {
 	void *pProc;
 
 	libName = MetaData_GetModuleRefName(pMetaData, pImplMap->importScope);
-
-#ifndef _WIN32
-	return (fnPInvoke)invokeJsFunc;
-#else 
 	
 	pLib = GetLib(libName);
 	if (pLib == NULL) {
@@ -105,7 +102,10 @@ fnPInvoke PInvoke_GetFunction(tMetaData *pMetaData, tMD_ImplMap *pImplMap) {
 		return NULL;
 	}
 
+#ifdef _WIN32
 	pProc = GetProcAddress(pLib->pLib, pImplMap->importName);
+#else
+	pProc = dlsym(pLib->pLib, pImplMap->importName);
 #endif
 	return pProc;
 

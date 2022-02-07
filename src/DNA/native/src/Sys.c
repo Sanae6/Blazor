@@ -88,6 +88,14 @@ log_f(3, "--- mallocForever: TotalSize %d\n", mallocForeverSize);
 	return malloc(size);
 }
 
+char* stringOrNull(char* str) {
+	char* loc = malloc(16);
+	memset(loc, 0, 16);
+	sprintf(loc, "%p", str);
+	if (str != NULL) return str;
+	return "NULL";
+}
+
 /*
 #ifdef _DEBUG
 void* mallocTrace(int s, char *pFile, int line) {
