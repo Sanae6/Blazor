@@ -6,3 +6,6 @@ obj
 .vs/
 /packages/
 /artifacts/
+
+cmake-build*/
+.idea/
