@@ -141,11 +141,11 @@ Destination:
 */
 static char* tableDefs[] = {
 	// 0x00
-	"sxSpGpGpGp",
+	"sxSpGpGxGx",
 	// 0x01
 	"x*;*SpSp",
 	// 0x02
-	"x*mpi*SpSp0*\x04*\x06*xclcxcxcx*xpxpx*xpx*xpx*x*x*xpI*xpxpxpxpx*xpx*x*xpxpxpxp",
+	"xpmpi*SpSp0*\x04*\x06*xclcxcxcx*xpxpx*xpx*xpx*x*x*xpI*xpxpxpxpx*xpx*x*xpxpxpxp",
 	// 0x03
 	NULL,
 	// 0x04
@@ -418,6 +418,7 @@ static void* LoadSingleTable(tMetaData *pThis, tRVA *pRVA, int tableID, void **p
 							pSource += 2;
 						}
 						v = (size_t)(pThis->strings.pStart + v);
+                        if (tableID==2&&row==38) printf("Funny table %s %d\n", v, (pDest - (u_char*)pRet) - rowLen * row);
 						break;
 					case 'G': // index into GUID heap
 						if (pThis->index32BitGUID) {
@@ -460,6 +461,7 @@ static void* LoadSingleTable(tMetaData *pThis, tRVA *pRVA, int tableID, void **p
 						Crash("Cannot handle MetaData source definition character '%c' (0x%02X)\n", d, d);
 				}
 			}
+            if (!tableID) printf("Saving to %p\n", pDest);
 			switch (pDef[i+1]) {
                 case 'p':
                     *(size_t*)pDest = v;
@@ -484,6 +486,7 @@ static void* LoadSingleTable(tMetaData *pThis, tRVA *pRVA, int tableID, void **p
 					Crash("Cannot handle MetaData destination definition character '%c'\n", pDef[i+1]);
 			}
 		}
+        if (tableID == 2 && row == 38)printf("Final size %d %p\n", pDest - (unsigned char*)pRet, pRet);
 	}
 
 	log_f(1, "Loaded MetaData table 0x%02X; %d rows\n", tableID, numRows);

@@ -260,7 +260,7 @@ static tCLIFile* LoadPEFile(void *pData) {
 	pRet->pRVA = RVA();
 	pRet->pMetaData = pMetaData = MetaData();
 
-	lfanew = *(unsigned int*)&(pMSDOSHeader[0x3c]);
+    lfanew = *(unsigned int*)&(pMSDOSHeader[0x3c]);
 	pPEHeader = pMSDOSHeader + lfanew + 4;
 	pPEOptionalHeader = pPEHeader + 20;
 	pPESectionHeaders = pPEOptionalHeader + 224;

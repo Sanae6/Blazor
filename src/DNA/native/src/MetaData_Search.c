@@ -174,7 +174,6 @@ tMD_TypeDef* MetaData_GetTypeDefFromName(tMetaData *pMetaData, STRING nameSpace,
 		tMD_TypeDef *pTypeDef;
 
 		pTypeDef = (tMD_TypeDef*)MetaData_GetTableRow(pMetaData, MAKE_TABLE_INDEX(MD_TABLE_TYPEDEF, i));
-//        printf("pogw %d\n", pTypeDef->isTypeInitialised);
 		if (pInNestedClass == pTypeDef->pNestedIn &&
 			strcmp(name, pTypeDef->name) == 0 &&
 			(pInNestedClass != NULL || strcmp(nameSpace, pTypeDef->nameSpace) == 0)) {

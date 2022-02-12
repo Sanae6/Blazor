@@ -61,6 +61,7 @@ struct tMD_Module_ {
 	GUID_ mvID;
 };
 typedef struct tMD_Module_ tMD_Module;
+#define MD_TABLE_MODULE 0x00
 
 // Table 0x01 - TypeRef
 struct tMD_TypeRef_ {
@@ -162,7 +163,7 @@ struct tMD_TypeDef_ {
 	// Pointer to the heap object which is the Type class object for this type.
 	// This is only allocated as needed, so defaults to NULL
 	HEAP_PTR typeObject;
-};
+} __attribute__((packed));
 #define MD_TABLE_TYPEDEF 0x02
 
 struct tMD_FieldDef_ {

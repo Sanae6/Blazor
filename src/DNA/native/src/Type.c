@@ -433,12 +433,15 @@ void Type_Init() {
 			types[i]->instanceMemSize = typeInit[i].instanceMemSize;
 		}
 	}
+    printf("trolla\n");
 	for (i=0; i<numInitTypes; i++) {
 		if (typeInit[i].assemblyName != NULL) {
+            printf("Trolle %s\n", typeInit[i].name);
 			MetaData_Fill_TypeDef(types[i], NULL, NULL);
 		} else {
 			// Special initialisation for arrays of particular types.
-			types[i] = Type_GetArrayTypeDef(types[(U32)(typeInit[i].name)], NULL, NULL);
+            printf("Idk %d\n", (size_t)(typeInit[i].name));
+			types[i] = Type_GetArrayTypeDef(types[(size_t)(typeInit[i].name)], NULL, NULL);
 		}
 	}
 	CorLibDone = 1;
